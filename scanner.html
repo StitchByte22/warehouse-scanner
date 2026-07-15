@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Warehouse Scanner</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        #reader {
+            width: 300px;
+            margin: auto;
+        }
+
+        #result {
+            margin-top: 30px;
+            font-size: 22px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h1>📦 Warehouse Scanner</h1>
+
+<p>Scan picking list barcode:</p>
+
+<div id="reader"></div>
+
+<div id="result"></div>
+
+
+<script>
+
+function onScanSuccess(decodedText, decodedResult) {
+
+    document.getElementById("result").innerHTML =
+        "✅ Scanned Order: " + decodedText;
+
+    // Stops scanning after successful scan
+    html5QrcodeScanner.clear();
+
+}
+
+
+let html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader",
+    {
+        fps: 10,
+        qrbox: 250
+    }
+);
+
+html5QrcodeScanner.render(onScanSuccess);
+
+</script>
+
+
+</body>
+</html>
