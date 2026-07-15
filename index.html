@@ -37,13 +37,30 @@
 
 
 <script>
-
 function onScanSuccess(decodedText, decodedResult) {
 
     document.getElementById("result").innerHTML =
-        "✅ Scanned Order: " + decodedText;
+        "⏳ Sending order: " + decodedText;
 
-    // Stops scanning after successful scan
+
+    fetch("https://hook.eu1.make.com/6j7qt9m38dha88p55r8sa5fxwkdekxmr", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            orderNumber: decodedText
+        })
+    })
+    .then(response => response.text())
+    .then(data => {
+
+        document.getElementById("result").innerHTML =
+        "✅ Sent to Make: " + decodedText;
+
+    });
+
+
     html5QrcodeScanner.clear();
 
 }
