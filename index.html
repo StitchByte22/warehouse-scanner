@@ -38,14 +38,23 @@
 
 <script>
 let processing = false;
-    
+
 function onScanSuccess(decodedText, decodedResult) {
 
+    if (processing) {
+        return;
+    }
+
+    processing = true;
+
+    // Pause the camera scanner immediately
+    html5QrcodeScanner.pause(true);
+
     document.getElementById("result").innerHTML =
-        "⏳ Sending order: " + decodedText;
+        "⏳ Processing: " + decodedText;
 
 
-    fetch("https://hook.eu1.make.com/6j7qt9m38dha88p55r8sa5fxwkdekxmr", {
+    fetch("YOUR_MAKE_WEBHOOK_URL", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -58,9 +67,27 @@ function onScanSuccess(decodedText, decodedResult) {
     .then(data => {
 
         document.getElementById("result").innerHTML =
-        "✅ Sent to Make: " + decodedText;
+        "✅ Completed: " + decodedText;
+
+    })
+    .catch(error => {
+
+        document.getElementById("result").innerHTML =
+        "❌ Error sending scan";
 
     });
+
+
+    setTimeout(() => {
+
+        processing = false;
+
+        html5QrcodeScanner.resume();
+
+        document.getElementById("result").innerHTML =
+        "📦 Ready for next scan";
+
+    }, 3000);
 
 }
 
