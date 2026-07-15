@@ -38,20 +38,24 @@
 
 <script>
 let processing = false;
+let lastScanned = "";
 
 function onScanSuccess(decodedText, decodedResult) {
 
-    if (processing) {
+    // Ignore duplicate scans
+    if (processing || decodedText === lastScanned) {
         return;
     }
 
     processing = true;
+    lastScanned = decodedText;
 
-    // Pause the camera scanner immediately
+    // Pause camera immediately
     html5QrcodeScanner.pause(true);
 
+
     document.getElementById("result").innerHTML =
-        "⏳ Processing: " + decodedText;
+        "⏳ Processing order: " + decodedText;
 
 
     fetch("YOUR_MAKE_WEBHOOK_URL", {
@@ -67,27 +71,30 @@ function onScanSuccess(decodedText, decodedResult) {
     .then(data => {
 
         document.getElementById("result").innerHTML =
-        "✅ Completed: " + decodedText;
+        "✅ DONE<br><br>Order " + decodedText + " updated";
 
     })
     .catch(error => {
 
         document.getElementById("result").innerHTML =
-        "❌ Error sending scan";
+        "❌ ERROR<br><br>" + decodedText;
 
     });
 
 
+    // Wait before allowing another scan
     setTimeout(() => {
 
         processing = false;
+        lastScanned = "";
 
         html5QrcodeScanner.resume();
 
-        document.getElementById("result").innerHTML =
-        "📦 Ready for next scan";
 
-    }, 3000);
+        document.getElementById("result").innerHTML =
+        "📦 Scan next barcode";
+
+    }, 4000);
 
 }
 
